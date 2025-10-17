@@ -37,7 +37,7 @@ class CryptoDataFetcherTest:
 
     def test_api_connection(self):
         """Test if CoinGecko API is accessible."""
-        print("🔗 Testing API connection...")
+        print("Testing API connection...")
 
         try:
             # Test basic API connectivity
@@ -47,20 +47,20 @@ class CryptoDataFetcherTest:
             )
 
             if response.status_code == 200:
-                print("✅ API connection successful")
+                print("API connection successful")
                 self.test_results['api_connection'] = True
                 return True
             else:
-                print(f"❌ API connection failed with status code: {response.status_code}")
+                print(f"API connection failed with status code: {response.status_code}")
                 return False
 
         except requests.exceptions.RequestException as e:
-            print(f"❌ API connection failed: {e}")
+            print(f"API connection failed: {e}")
             return False
 
     def test_data_fetching(self):
         """Test if data can be fetched from the API."""
-        print("\n📊 Testing data fetching...")
+        print("\nTesting data fetching...")
 
         try:
             # Initialize fetcher
@@ -70,20 +70,20 @@ class CryptoDataFetcherTest:
             raw_data = fetcher.fetch_market_data()
 
             if raw_data and isinstance(raw_data, list) and len(raw_data) > 0:
-                print(f"✅ Data fetching successful - retrieved {len(raw_data)} cryptocurrencies")
+                print(f"Data fetching successful - retrieved {len(raw_data)} cryptocurrencies")
                 self.test_results['data_fetching'] = True
                 return raw_data
             else:
-                print("❌ Data fetching failed - no data returned")
+                print("Data fetching failed - no data returned")
                 return None
 
         except Exception as e:
-            print(f"❌ Data fetching failed with error: {e}")
+            print(f"Data fetching failed with error: {e}")
             return None
 
     def test_csv_creation(self):
         """Test if CSV file is created correctly."""
-        print("\n💾 Testing CSV file creation...")
+        print("\nTesting CSV file creation...")
 
         try:
             # Get initial file count
@@ -95,7 +95,7 @@ class CryptoDataFetcherTest:
             success = fetcher.fetch_and_save_data()
 
             if not success:
-                print("❌ CSV creation failed - fetch_and_save_data returned False")
+                print("CSV creation failed - fetch_and_save_data returned False")
                 return None
 
             # Check if new file was created
@@ -107,29 +107,29 @@ class CryptoDataFetcherTest:
                 newest_file = max(new_files, key=os.path.getctime)
                 file_size = os.path.getsize(newest_file)
 
-                print(f"✅ CSV file created successfully: {newest_file}")
+                print(f"CSV file created successfully: {newest_file}")
                 print(f"   File size: {file_size} bytes")
 
                 self.test_results['csv_creation'] = True
                 return newest_file
             else:
-                print("❌ CSV creation failed - no new file found")
+                print("CSV creation failed - no new file found")
                 return None
 
         except Exception as e:
-            print(f"❌ CSV creation failed with error: {e}")
+            print(f"CSV creation failed with error: {e}")
             return None
 
     def test_data_validation(self, csv_file=None):
         """Test if the data in CSV has expected structure and content."""
-        print("\n🔍 Testing data validation...")
+        print("\nTesting data validation...")
 
         try:
             # If no file provided, get the most recent one
             if not csv_file:
                 csv_files = glob.glob("data/raw/crypto_market_data_*.csv")
                 if not csv_files:
-                    print("❌ Data validation failed - no CSV files found")
+                    print("Data validation failed - no CSV files found")
                     return False
                 csv_file = max(csv_files, key=os.path.getctime)
 
@@ -138,23 +138,23 @@ class CryptoDataFetcherTest:
 
             # Test 1: Check if file is not empty
             if df.empty:
-                print("❌ Data validation failed - CSV file is empty")
+                print("Data validation failed - CSV file is empty")
                 return False
 
-            print(f"✅ CSV file contains {len(df)} rows")
+            print(f"CSV file contains {len(df)} rows")
 
             # Test 2: Check for expected columns
             missing_columns = set(self.expected_columns) - set(df.columns)
             extra_columns = set(df.columns) - set(self.expected_columns)
 
             if missing_columns:
-                print(f"❌ Missing expected columns: {missing_columns}")
+                print(f"Missing expected columns: {missing_columns}")
                 return False
 
             if extra_columns:
-                print(f"ℹ️  Extra columns found: {extra_columns}")
+                print(f"Extra columns found: {extra_columns}")
 
-            print("✅ All expected columns present")
+            print("All expected columns present")
 
             # Test 3: Check for data quality
             required_numeric_columns = ['current_price', 'market_cap', 'total_volume']
@@ -162,17 +162,17 @@ class CryptoDataFetcherTest:
                 if col in df.columns:
                     non_null_count = df[col].notna().sum()
                     if non_null_count == 0:
-                        print(f"❌ Column {col} has no valid data")
+                        print(f"Column {col} has no valid data")
                         return False
 
-            print("✅ Key numeric columns have valid data")
+            print("Key numeric columns have valid data")
 
             # Test 4: Check timestamp format
             try:
                 pd.to_datetime(df['timestamp'].iloc[0])
-                print("✅ Timestamp format is valid")
+                print("Timestamp format is valid")
             except:
-                print("❌ Invalid timestamp format")
+                print("Invalid timestamp format")
                 return False
 
             # Test 5: Check for expected cryptocurrencies
@@ -185,20 +185,20 @@ class CryptoDataFetcherTest:
             expected_found = sum(1 for coin in tracked_coins[:10] if coin in found_coins)
 
             if expected_found >= 5:  # At least 5 of the top 10 should be found
-                print(f"✅ Found {expected_found} of top 10 expected cryptocurrencies")
+                print(f"Found {expected_found} of top 10 expected cryptocurrencies")
             else:
-                print(f"⚠️  Only found {expected_found} of top 10 expected cryptocurrencies")
+                print(f"Only found {expected_found} of top 10 expected cryptocurrencies")
 
             self.test_results['data_validation'] = True
             return True
 
         except Exception as e:
-            print(f"❌ Data validation failed with error: {e}")
+            print(f"Data validation failed with error: {e}")
             return False
 
     def run_all_tests(self):
         """Run all tests and provide summary."""
-        print("🚀 Starting Crypto Data Fetcher Tests")
+        print("Starting Crypto Data Fetcher Tests")
         print("=" * 50)
 
         start_time = time.time()
@@ -211,15 +211,15 @@ class CryptoDataFetcherTest:
             csv_file = self.test_csv_creation()
             validation_ok = self.test_data_validation(csv_file)
         else:
-            print("\n⚠️  Skipping remaining tests due to API connection failure")
+            print("\nSkipping remaining tests due to API connection failure")
 
         # Summary
         print("\n" + "=" * 50)
-        print("📋 TEST SUMMARY")
+        print("TEST SUMMARY")
         print("=" * 50)
 
         for test_name, result in self.test_results.items():
-            status = "✅ PASS" if result else "❌ FAIL"
+            status = "PASS" if result else "FAIL"
             print(f"{test_name.replace('_', ' ').title():.<30} {status}")
 
         total_passed = sum(self.test_results.values())
@@ -232,10 +232,10 @@ class CryptoDataFetcherTest:
         print(f"Test duration: {duration:.2f} seconds")
 
         if total_passed == total_tests:
-            print("\n🎉 ALL TESTS PASSED! Crypto data fetcher is working correctly.")
+            print("\nALL TESTS PASSED! Crypto data fetcher is working correctly.")
             return True
         else:
-            print(f"\n⚠️  {total_tests - total_passed} tests failed. Please check the issues above.")
+            print(f"\n{total_tests - total_passed} tests failed. Please check the issues above.")
             return False
 
 
