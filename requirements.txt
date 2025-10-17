@@ -1,0 +1,7 @@
+requests
+pandas
+sqlalchemy
+python-dotenv
+pyyaml
+schedule
+pytest

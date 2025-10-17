@@ -1,0 +1,68 @@
+# Crypto Analytics Platform Configuration
+
+api:
+  coingecko:
+    base_url: "https://api.coingecko.com/api/v3"
+    endpoints:
+      coins_list: "/coins/list"
+      coin_data: "/coins/{id}"
+      market_data: "/coins/markets"
+      price_history: "/coins/{id}/market_chart"
+      trending: "/search/trending"
+    rate_limit_per_minute: 10
+    timeout: 30
+
+database:
+  type: "postgresql"
+  host: "localhost"
+  port: 5432
+  name: "crypto_analytics"
+  username: "${DB_USERNAME}"
+  password: "${DB_PASSWORD}"
+  pool_size: 5
+  max_overflow: 10
+  echo: false
+
+cryptocurrencies:
+  # Top 20 cryptocurrencies by market cap
+  tracked_coins:
+    - bitcoin
+    - ethereum
+    - tether
+    - bnb
+    - solana
+    - xrp
+    - usd-coin
+    - steth
+    - cardano
+    - tron
+    - avalanche-2
+    - shiba-inu
+    - polkadot
+    - chainlink
+    - bitcoin-cash
+    - near
+    - matic-network
+    - internet-computer
+    - litecoin
+    - dai
+
+update_frequency:
+  price_data: 300  # seconds (5 minutes)
+  market_data: 900  # seconds (15 minutes)
+  coin_info: 3600  # seconds (1 hour)
+  trending_data: 1800  # seconds (30 minutes)
+
+data_retention:
+  raw_price_data: 90  # days
+  aggregated_hourly: 365  # days
+  aggregated_daily: 1825  # days (5 years)
+  market_data: 180  # days
+  cleanup_frequency: 24  # hours
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/crypto_analytics.log"
+  max_size_mb: 100
+  backup_count: 5
